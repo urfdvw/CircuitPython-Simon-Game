@@ -10,7 +10,7 @@ hole_x = mm(1500);
 hole_y = mm(950);
 case_r = mm(850) + err;
 case_skirt = 5;
-case_rase = mm(600);
+case_raise = mm(600);
 case_z = mm(2800);
 mcu_err = 1;
 mcu_x = mm(1000) + mcu_err;
@@ -55,16 +55,16 @@ module SmoothXYCube(size, smooth_rad) {
     linear_extrude(size[2]) hull() {
         translate([smoothx, smoothy])
         scale([scalex, scaley])
-        circle(r=smooth_rad);
+            circle(r=smooth_rad);
         translate([size[0]-smoothx, smoothy])
         scale([scalex, scaley])
-        circle(r=smooth_rad);
+            circle(r=smooth_rad);
         translate([smoothx, size[1]-smoothy])
         scale([scalex, scaley])
-        circle(r=smooth_rad);
+            circle(r=smooth_rad);
         translate([size[0]-smoothx, size[1]-smoothy])
         scale([scalex, scaley])
-        circle(r=smooth_rad);
+            circle(r=smooth_rad);
     }
 }
 
@@ -82,25 +82,33 @@ difference () {
                     case_r
                 );
         }
-        translate([0, 0, - 0.5 * case_rase])
+        translate([0, 0, - 0.5 * case_raise])
             cylinder4(
                 hole_r + wall,
                 hole_r + wall,
-                case_rase);
+                case_raise);
     }
-    translate([0, 0, - 0.5 * case_rase])
+    translate([0, 0, - 0.5 * case_raise])
         cylinder4(
             hole_r,
             hole_r,
             inf);
     translate([-mcu_x, -mcu_y, - 0.5 * inf ])
-    SmoothXYCube(size = [
-        mcu_x * 2,
-        mcu_y * 2,
-        inf
-    ], smooth_rad = mcu_r);
+        SmoothXYCube(size = [
+            mcu_x * 2,
+            mcu_y * 2,
+            inf
+        ], smooth_rad = mcu_r);
     translate([0.5 * inf, 0, -port_y / 2 - wall])
     rotate([0, 90, 0])
         cube([port_y, port_x, inf], center=true);
+
+    translate([
+        0.5 * inf,
+        0,
+        -case_raise - 1.6 - sqrt(0.5) * 5 ])
+    rotate([0, 90, 0])
+    rotate([0, 0, 45])
+        cube([5, 5, inf], center=true);
 }
 
